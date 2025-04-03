@@ -18,7 +18,7 @@ PRODUCTION_SERVER="user@your-server.com"  # Cambia con i dettagli del tuo server
 PRODUCTION_PATH="/var/www/dynamic-crud-manager"  # Cambia con il percorso sul server
 
 # Configurazione Git
-GIT_REPO_URL=""            # URL del repository Git (es. https://github.com/username/repo.git)
+GIT_REPO_URL="https://github.com/dcintur/dynamic-crud-manager.git"            # URL del repository Git (es. https://github.com/username/repo.git)
 GIT_USERNAME="dcintur"            # Il tuo nome utente Git
 GIT_EMAIL="daniele.cintura@gmail.com"               # La tua email Git
 GIT_TOKEN="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"               # Il tuo token di accesso personale (per GitHub, GitLab, etc.)
