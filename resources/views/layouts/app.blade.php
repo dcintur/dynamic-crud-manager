@@ -28,7 +28,7 @@
         <a class="navbar-brand" href="{{ url('/') }}">
             <i class="bi bi-grid-3x3-gap-fill me-2"></i>{{ config('app.name', 'Laravel') }}
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -73,7 +73,7 @@
                         @foreach($menuGroups as $groupName => $pages)
                             @if(count($pages) > 1)
                                 <li class="nav-item dropdown">
-                                    <a id="navbarDropdown{{ Str::slug($groupName) }}" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a id="navbarDropdown{{ Str::slug($groupName) }}" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="bi bi-folder2"></i> {{ $groupName }}
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-start shadow-sm" aria-labelledby="navbarDropdown{{ Str::slug($groupName) }}">
@@ -129,7 +129,7 @@
                     @endif
                 @else
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
                         </a>
 

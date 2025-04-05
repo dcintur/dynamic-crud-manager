@@ -31,73 +31,40 @@
                         </div>
                     @endif
 
-                    <!-- Advanced Filter Section -->
-                    <div class="mb-4">
-                        <button class="btn btn-outline-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                            <i class="bi bi-funnel"></i> Advanced Filters
-                        </button>
-                        
-                        <div class="collapse" id="filterCollapse">
-                            <x-advanced-filter :page="$page" />
-                        </div>
-                    </div>
+<!-- Advanced Filter Section -->
+<div class="mb-4">
+    <button class="btn btn-outline-secondary mb-2" type="button" data-toggle="collapse" data-target="#filterCollapse">
+        <i class="bi bi-funnel"></i> Advanced Filters
+    </button>
+    
+    <div class="collapse" id="filterCollapse">
+        <x-advanced-filter :page="$page" />
+    </div>
+</div>
 
-                    <!-- Export Section -->
-                    <div class="mb-3 d-flex justify-content-end">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-download"></i> Export
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('dynamic-data.export', [
-                                        'page' => $page->id, 
-                                        'format' => 'csv',
-                                        'filter_field' => request('filter_field'),
-                                        'filter_operator' => request('filter_operator'),
-                                        'filter_value' => request('filter_value'),
-                                        'filters' => request('filters'),
-                                        'sort' => request('sort'),
-                                        'direction' => request('direction')
-                                    ]) }}">
-                                        <i class="bi bi-filetype-csv"></i> CSV
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('dynamic-data.export', [
-                                        'page' => $page->id, 
-                                        'format' => 'xlsx',
-                                        'filter_field' => request('filter_field'),
-                                        'filter_operator' => request('filter_operator'),
-                                        'filter_value' => request('filter_value'),
-                                        'filters' => request('filters'),
-                                        'sort' => request('sort'),
-                                        'direction' => request('direction')
-                                    ]) }}">
-                                        <i class="bi bi-file-earmark-excel"></i> Excel
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('dynamic-data.export', [
-                                        'page' => $page->id, 
-                                        'format' => 'pdf',
-                                        'filter_field' => request('filter_field'),
-                                        'filter_operator' => request('filter_operator'),
-                                        'filter_value' => request('filter_value'),
-                                        'filters' => request('filters'),
-                                        'sort' => request('sort'),
-                                        'direction' => request('direction')
-                                    ]) }}">
-                                        <i class="bi bi-file-earmark-pdf"></i> PDF
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <button type="button" class="btn btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#importModal">
-                            <i class="bi bi-upload"></i> Import
-                        </button>
-                    </div>
+<!-- Export Section -->
+<div class="mb-3 d-flex justify-content-end">
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="bi bi-download"></i> Export
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportDropdown">
+            <a class="dropdown-item" href="{{ route('dynamic-data.export', ['page' => $page->id, 'format' => 'csv']) }}">
+                <i class="bi bi-filetype-csv"></i> CSV
+            </a>
+            <a class="dropdown-item" href="{{ route('dynamic-data.export', ['page' => $page->id, 'format' => 'xlsx']) }}">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </a>
+            <a class="dropdown-item" href="{{ route('dynamic-data.export', ['page' => $page->id, 'format' => 'pdf']) }}">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+    
+    <button type="button" class="btn btn-outline-primary ml-2" data-toggle="modal" data-target="#importModal">
+        <i class="bi bi-upload"></i> Import
+    </button>
+</div>
 
                     <!-- Data Table -->
                     <div class="table-responsive">
@@ -189,19 +156,21 @@
 </div>
 
 <!-- Import Modal -->
-<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form action="{{ route('dynamic-data.import', $page) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="importModalLabel">Import Data</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="importFile" class="form-label">CSV/Excel File</label>
-                        <input type="file" class="form-control" id="importFile" name="importFile" accept=".csv,.xlsx,.xls" required>
+                    <div class="form-group">
+                        <label for="importFile">CSV/Excel File</label>
+                        <input type="file" class="form-control-file" id="importFile" name="importFile" accept=".csv,.xlsx,.xls" required>
                         <small class="form-text text-muted">File must be in CSV or Excel format</small>
                     </div>
                     <div class="alert alert-info">
@@ -209,7 +178,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-upload"></i> Import
                     </button>

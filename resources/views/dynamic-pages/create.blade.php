@@ -24,11 +24,17 @@
                         <div class="mb-3">
                             <label for="icon" class="form-label">Icon</label>
                             <div class="input-group">
-                                <span class="input-group-text">
-                                    <i id="icon-preview" class="{{ old('icon', 'bi bi-grid') }}"></i>
-                                </span>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i id="icon-preview" class="{{ old('icon', 'bi bi-grid') }}"></i>
+                                    </span>
+                                </div>
                                 <input type="text" class="form-control @error('icon') is-invalid @enderror" id="icon" name="icon" value="{{ old('icon') }}">
-                                <button class="btn btn-outline-secondary" type="button" id="icon-selector-btn">Select Icon</button>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#icon-selector" aria-expanded="false" aria-controls="icon-selector">
+                                        Select Icon
+                                    </button>
+                                </div>
                             </div>
                             <div class="form-text">Choose an icon from Bootstrap Icons</div>
                             @error('icon')
@@ -37,9 +43,9 @@
 
                             <div class="mt-2 collapse" id="icon-selector">
                                 <div class="card card-body">
-                                    <div class="row row-cols-6 g-2">
+                                    <div class="row">
                                         @foreach(['bi-grid', 'bi-list', 'bi-table', 'bi-people', 'bi-person', 'bi-building', 'bi-house', 'bi-cart', 'bi-bag', 'bi-credit-card', 'bi-calendar', 'bi-clock', 'bi-clipboard', 'bi-file-text', 'bi-folder', 'bi-envelope', 'bi-telephone', 'bi-chat', 'bi-camera', 'bi-image', 'bi-music-note', 'bi-film', 'bi-map', 'bi-truck', 'bi-car-front', 'bi-airplane', 'bi-laptop', 'bi-phone', 'bi-printer', 'bi-tools'] as $icon)
-                                            <div class="col text-center">
+                                            <div class="col-2 text-center mb-2">
                                                 <button type="button" class="btn btn-outline-secondary btn-icon-select" data-icon="bi {{ $icon }}">
                                                     <i class="bi {{ $icon }}"></i>
                                                 </button>
@@ -92,32 +98,23 @@
     </div>
 </div>
 
-@push('scripts')
+@push('js')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const iconInput = document.getElementById('icon');
-        const iconPreview = document.getElementById('icon-preview');
-        const iconSelectorBtn = document.getElementById('icon-selector-btn');
-        const iconSelector = document.getElementById('icon-selector');
+    $(document).ready(function() {
+        const iconInput = $('#icon');
+        const iconPreview = $('#icon-preview');
         
         // Update preview when input changes
-        iconInput.addEventListener('input', function() {
-            iconPreview.className = this.value || 'bi bi-grid';
-        });
-        
-        // Toggle icon selector
-        iconSelectorBtn.addEventListener('click', function() {
-            iconSelector.classList.toggle('show');
+        iconInput.on('input', function() {
+            iconPreview.attr('class', $(this).val() || 'bi bi-grid');
         });
         
         // Handle icon selection
-        document.querySelectorAll('.btn-icon-select').forEach(button => {
-            button.addEventListener('click', function() {
-                const icon = this.getAttribute('data-icon');
-                iconInput.value = icon;
-                iconPreview.className = icon;
-                iconSelector.classList.remove('show');
-            });
+        $('.btn-icon-select').on('click', function() {
+            const icon = $(this).data('icon');
+            iconInput.val(icon);
+            iconPreview.attr('class', icon);
+            $('#icon-selector').collapse('hide');
         });
     });
 </script>
