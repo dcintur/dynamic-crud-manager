@@ -147,7 +147,19 @@ class DynamicDataController extends Controller
 
     public function edit(DynamicData $dynamicData)
     {
+        // Debug: stampa l'ID del record e l'ID della pagina
+        \Log::info('DynamicData ID: ' . $dynamicData->id);
+        \Log::info('Page ID: ' . $dynamicData->dynamic_page_id);
+        
         $page = $dynamicData->page;
+        
+        // Debug: verifica se $page è null
+        \Log::info('Page is null: ' . ($page === null ? 'yes' : 'no'));
+        
+        if ($page) {
+            \Log::info('Page name: ' . $page->name);
+        }
+        
         return view('dynamic-data.edit', compact('dynamicData', 'page'));
     }
 

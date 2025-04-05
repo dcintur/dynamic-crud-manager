@@ -1,11 +1,18 @@
-@extends('layouts.app')
+@extends('adminlte::page')
 
 @section('content')
+
+<div class="alert alert-info">
+    dynamicData ID: {{ $dynamicData->id ?? 'not set' }}<br>
+    dynamicData Page ID: {{ $dynamicData->dynamic_page_id ?? 'not set' }}
+</div>
+
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Edit {{ $page->name }} Record</div>
+                <div class="card-header">Edit {{ $page ? $page->name : 'Unknown' }} Record</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('dynamic-data.update', $dynamicData) }}" enctype="multipart/form-data">

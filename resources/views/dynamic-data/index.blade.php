@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('adminlte::page')
 
 @section('content')
 <div class="container">
@@ -153,14 +153,14 @@
                                         @endforeach
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <a href="{{ route('dynamic-data.edit', $item) }}" class="btn btn-outline-primary">
-                                                    <i class="bi bi-pencil"></i>
+                                                <a href="{{ route('dynamic-data.edit', $item) }}" class="btn btn-info btn-sm">
+                                                    Edit
                                                 </a>
-                                                <form action="{{ route('dynamic-data.destroy', $item) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this record?');">
+                                                <form action="{{ route('dynamic-data.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this record?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline-danger">
-                                                        <i class="bi bi-trash"></i>
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        Delete
                                                     </button>
                                                 </form>
                                             </div>

@@ -6,3 +6,7 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+	max-width: 1920px;
+}

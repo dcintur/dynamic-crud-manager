@@ -16,7 +16,8 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\DashboardController::class, 'index'])->name('home');
 
 // Proteggi le rotte con middleware auth
     Route::middleware(['auth'])->group(function () {
@@ -47,7 +48,13 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
         ->name('dynamic-data.create')
         ->middleware('permission:create');
         
-    Route::resource('dynamic-data', DynamicDataController::class)->except(['index', 'create']);
+    // Route::resource('dynamic-data', DynamicDataController::class)->except(['index', 'create']);
+    Route::post('dynamic-data', [DynamicDataController::class, 'store'])->name('dynamic-data.store');
+    Route::get('dynamic-data/{dynamicData}/edit', [DynamicDataController::class, 'edit'])->name('dynamic-data.edit');
+    Route::put('dynamic-data/{dynamicData}', [DynamicDataController::class, 'update'])->name('dynamic-data.update');
+    Route::delete('dynamic-data/{dynamicData}', [DynamicDataController::class, 'destroy'])->name('dynamic-data.destroy');
+    Route::get('dynamic-data/{dynamicData}', [DynamicDataController::class, 'show'])->name('dynamic-data.show');
+
    
     // Export/Import with Permission Middleware
     Route::get('dynamic-data/export/{page}', [DynamicDataController::class, 'export'])
