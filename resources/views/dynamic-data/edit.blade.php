@@ -2,10 +2,10 @@
 
 @section('content')
 
-<div class="alert alert-info">
+{{-- <div class="alert alert-info">
     dynamicData ID: {{ $dynamicData->id ?? 'not set' }}<br>
     dynamicData Page ID: {{ $dynamicData->dynamic_page_id ?? 'not set' }}
-</div>
+</div> --}}
 
 
 <div class="container">

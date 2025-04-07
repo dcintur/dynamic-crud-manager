@@ -48,13 +48,26 @@ Route::get('/home', [App\Http\Controllers\DashboardController::class, 'index'])-
         ->name('dynamic-data.create')
         ->middleware('permission:create');
         
-    // Route::resource('dynamic-data', DynamicDataController::class)->except(['index', 'create']);
-    Route::post('dynamic-data', [DynamicDataController::class, 'store'])->name('dynamic-data.store');
-    Route::get('dynamic-data/{dynamicData}/edit', [DynamicDataController::class, 'edit'])->name('dynamic-data.edit');
-    Route::put('dynamic-data/{dynamicData}', [DynamicDataController::class, 'update'])->name('dynamic-data.update');
-    Route::delete('dynamic-data/{dynamicData}', [DynamicDataController::class, 'destroy'])->name('dynamic-data.destroy');
-    Route::get('dynamic-data/{dynamicData}', [DynamicDataController::class, 'show'])->name('dynamic-data.show');
-
+    // Dynamic Data operations with permission middleware
+    Route::post('dynamic-data', [DynamicDataController::class, 'store'])
+        ->name('dynamic-data.store')
+        ->middleware('permission:create');
+        
+    Route::get('dynamic-data/{dynamicData}/edit', [DynamicDataController::class, 'edit'])
+        ->name('dynamic-data.edit')
+        ->middleware('permission:edit');
+        
+    Route::put('dynamic-data/{dynamicData}', [DynamicDataController::class, 'update'])
+        ->name('dynamic-data.update')
+        ->middleware('permission:edit');
+        
+    Route::delete('dynamic-data/{dynamicData}', [DynamicDataController::class, 'destroy'])
+        ->name('dynamic-data.destroy')
+        ->middleware('permission:delete');
+        
+    Route::get('dynamic-data/{dynamicData}', [DynamicDataController::class, 'show'])
+        ->name('dynamic-data.show')
+        ->middleware('permission:view');
    
     // Export/Import with Permission Middleware
     Route::get('dynamic-data/export/{page}', [DynamicDataController::class, 'export'])
@@ -84,5 +97,27 @@ Route::get('/home', [App\Http\Controllers\DashboardController::class, 'index'])-
     // Permissions Management
     Route::get('roles/{role}/permissions', [UserManagementController::class, 'permissions'])->name('roles.permissions');
     Route::post('roles/{role}/permissions', [UserManagementController::class, 'updatePermissions'])->name('roles.permissions.update');
+
+    Route::get('export-routes', function() {
+        header('Content-Type: application/excel');
+        header('Content-Disposition: attachment; filename="routes.csv"');
+        
+        $routes = Route::getRoutes();
+        $fp = fopen('php://output', 'w');
+        fputcsv($fp, ['METHOD', 'URI', 'NAME', 'ACTION']);
+        
+        foreach ($routes as $route) {
+            fputcsv($fp, [
+                implode('|', $route->methods()), 
+                $route->uri(), 
+                $route->getName(), 
+                $route->getActionName()
+            ]);
+        }
+        
+        fclose($fp);
+        exit;
+    });
+
 
 });

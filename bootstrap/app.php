@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         // Aggiungi questa riga per Dompdf
         Barryvdh\DomPDF\ServiceProvider::class,
+        App\Providers\DynamicMenuServiceProvider::class,
     ])
     ->withExceptions(function (Exceptions $exceptions) {
         //

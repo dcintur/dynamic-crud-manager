@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DynamicDataExport;
 use App\Imports\DynamicDataImport;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class DynamicDataController extends Controller
 {
@@ -36,19 +37,19 @@ class DynamicDataController extends Controller
                 
                 switch ($operator) {
                     case 'equals':
-                        $query->$method("data->$field", $value);
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value));
                         break;
                         
                     case 'contains':
-                        $query->$method("data->$field", 'like', "%$value%");
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value) . '%');
                         break;
                         
                     case 'starts_with':
-                        $query->$method("data->$field", 'like', "$value%");
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value) . '%');
                         break;
                         
                     case 'ends_with':
-                        $query->$method("data->$field", 'like', "%$value");
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value));
                         break;
                         
                     case 'greater_than':
@@ -64,7 +65,35 @@ class DynamicDataController extends Controller
         
         // Apply simple filter if set (for backward compatibility)
         elseif ($request->filled('filter_field') && $request->filled('filter_value')) {
-            // ... existing simple filter code ...
+            $field = $request->filter_field;
+            $operator = $request->filter_operator;
+            $value = $request->filter_value;
+            
+            switch ($operator) {
+                case 'equals':
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value));
+                    break;
+                    
+                case 'contains':
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value) . '%');
+                    break;
+                    
+                case 'starts_with':
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value) . '%');
+                    break;
+                    
+                case 'ends_with':
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value));
+                    break;
+                    
+                case 'greater_than':
+                    $query->where("data->$field", '>', $value);
+                    break;
+                    
+                case 'less_than':
+                    $query->where("data->$field", '<', $value);
+                    break;
+            }
         }
         
         // Apply sorting if set
@@ -276,19 +305,19 @@ class DynamicDataController extends Controller
             
             switch ($operator) {
                 case 'equals':
-                    $query->where("data->$field", $value);
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value));
                     break;
                     
                 case 'contains':
-                    $query->where("data->$field", 'like', "%$value%");
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value) . '%');
                     break;
                     
                 case 'starts_with':
-                    $query->where("data->$field", 'like', "$value%");
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value) . '%');
                     break;
                     
                 case 'ends_with':
-                    $query->where("data->$field", 'like', "%$value");
+                    $query->where(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value));
                     break;
                     
                 case 'greater_than':
@@ -298,6 +327,51 @@ class DynamicDataController extends Controller
                 case 'less_than':
                     $query->where("data->$field", '<', $value);
                     break;
+            }
+        }
+        
+        // Apply advanced filters if set
+        if ($request->has('filters')) {
+            $filters = $request->filters;
+            
+            foreach ($filters as $index => $filter) {
+                if (empty($filter['field']) || empty($filter['value'])) {
+                    continue;
+                }
+                
+                $field = $filter['field'];
+                $operator = $filter['operator'];
+                $value = $filter['value'];
+                $join = isset($filter['join']) ? $filter['join'] : 'and';
+                
+                // Skip the first filter join
+                $method = ($index === 0 || $join === 'and') ? 'where' : 'orWhere';
+                
+                switch ($operator) {
+                    case 'equals':
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value));
+                        break;
+                        
+                    case 'contains':
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value) . '%');
+                        break;
+                        
+                    case 'starts_with':
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', strtolower($value) . '%');
+                        break;
+                        
+                    case 'ends_with':
+                        $query->$method(DB::raw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(data, '$.$field')))"), 'LIKE', '%' . strtolower($value));
+                        break;
+                        
+                    case 'greater_than':
+                        $query->$method("data->$field", '>', $value);
+                        break;
+                        
+                    case 'less_than':
+                        $query->$method("data->$field", '<', $value);
+                        break;
+                }
             }
         }
         
